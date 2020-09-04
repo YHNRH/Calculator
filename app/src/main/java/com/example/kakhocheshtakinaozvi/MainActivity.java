@@ -18,7 +18,13 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     GridLayout gr;
-
+    TextView virajenie;
+    TextView result;
+    int a;
+    int buf;
+    int state;
+    char[] marinochka = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '0', '+', '/', '=', '*'};
+    int vlad = 0;
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +41,6 @@ public class MainActivity extends AppCompatActivity {
         params.gravity = Gravity.CENTER;
 
 
-        int vlad = 0;
-        char[] marinochka = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '0', '+', '/', '=', '*'};
         // j -- нормер в строке
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 3; j++) {                          // i -- номер в столбце
@@ -47,10 +51,84 @@ public class MainActivity extends AppCompatActivity {
                 GridLayout.Spec column = GridLayout.spec(j, 1);
                 // Создадим параметр, в который передадим 2 строчки выше.
                 GridLayout.LayoutParams gridLayoutParam = new GridLayout.LayoutParams(row, column);
-                Button b = new Button(this);
+                final Button b = new Button(this);
                 b.getBackground().setColorFilter(new LightingColorFilter(0x11ace7f2, 0x11111111));
 
+                switch (marinochka[vlad]) {
+                    case('+'):  b.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            state = 1;
+                            buf = Integer.parseInt(virajenie.getText().toString());
+                            virajenie.setText("");
+                        }
+                    });
+                    break;
+                    case('-'):  b.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            state = 2;
+                            buf = Integer.parseInt(virajenie.getText().toString());virajenie.setText("");
+                        }
+                    });
+                        break;
+                    case('/'):  b.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            state = 4;
+                            buf = Integer.parseInt(virajenie.getText().toString());virajenie.setText("");
+                        }
+                    });
+                        break;
+                    case('*'):  b.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            state = 3;
+                            buf = Integer.parseInt(virajenie.getText().toString());
+                            virajenie.setText("");
+                        }
+                    });
+                        break;
+                    case('='):  b.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            switch(state){
+                                case(1):
+                                    state = 0;
+                                    a = Integer.parseInt(virajenie.getText().toString())+buf;
+                                    result.setText(String.valueOf(a));
+                                    virajenie.setText("");
+                                    break;
+                                case(2):
+                                    state = 0;
+                                    a = Integer.parseInt(virajenie.getText().toString())-buf;
+                                    result.setText(String.valueOf(a));
+                                    virajenie.setText("");
+                                    break;
+                            case(3):
+                            state = 0;
+                                a = Integer.parseInt(virajenie.getText().toString())*buf;
+                                result.setText(String.valueOf(a));
+                                virajenie.setText("");
+                                break;
 
+                            case(4):
+                            state = 0;
+                                a = Integer.parseInt(virajenie.getText().toString())/buf;
+                                result.setText(String.valueOf(a));
+                                virajenie.setText("");
+                                break;
+                        }}
+                    });
+                        break;
+                    default:  b.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+virajenie.setText(virajenie.getText().toString()+b.getText());
+                        }
+                    });
+                        break;
+                }
                 b.setText(String.valueOf(marinochka[vlad]));
                 vlad++;
                 //добавили кнопку в GridLayout, применив к ней параметры gridLayoutParam (кнопка появится в ячейке row;column)
@@ -60,14 +138,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         gr.setLayoutParams(params);
-        //gr.setPadding(0,0,0,100);
-        TextView virajenie = new TextView(this);
-        virajenie.setHint("Введите выражение");
-        TextView result = new TextView(this);
-
-       // result.setHeight(10);
-
-        result.setHint("Ответ");
+        virajenie = new TextView(this);
+        result = new TextView(this);
 
 
         result.setLayoutParams(params);
